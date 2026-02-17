@@ -24,10 +24,14 @@ pipeline {
                 recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')]
             }
         }
-
+        
         stage('Deploy') {
             steps {
                 sh 'sam build'
+                sh '''
+                    aws s3api head-bucket --bucket aws-sam-cli-managed-staging-samclisourcebucket-upt09go84tay 2>/dev/null || \
+                    aws s3 mb s3://aws-sam-cli-managed-staging-samclisourcebucket-upt09go84tay --region us-east-1
+                '''
                 sh '''
                     sam deploy \
                         --config-file samconfig.toml \
