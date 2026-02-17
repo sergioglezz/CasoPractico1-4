@@ -29,18 +29,15 @@ pipeline {
             steps {
                 sh 'sam build'
                 sh '''
-                   sam deploy \
-                    --stack-name todo-list-aws \
-                    --parameter-overrides Stage=staging \
-                    --no-confirm-changeset \
-                    --no-fail-on-empty-changeset \
-                    --resolve-s3 \
-                    --capabilities CAPABILITY_IAM \
-                    --region us-east-1
+                    sam deploy \
+                        --config-file samconfig.toml \
+                        --config-env staging \
+                        --no-confirm-changeset \
+                        --no-fail-on-empty-changeset
                 '''
                 script {
                     env.API_URL = sh(
-                        script: "aws cloudformation describe-stacks --stack-name todo-list-aws --query 'Stacks[0].Outputs[?OutputKey==`BaseUrlApi`].OutputValue' --output text --region us-east-1",
+                        script: "aws cloudformation describe-stacks --stack-name todo-list-aws-staging --query 'Stacks[0].Outputs[?OutputKey==`BaseUrlApi`].OutputValue' --output text --region us-east-1",
                         returnStdout: true
                     ).trim()
                     echo "API URL: ${env.API_URL}"
