@@ -28,6 +28,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh 'sam build'
+                
                 sh '''
                     sam deploy \
                         --config-file samconfig.toml \
@@ -35,9 +36,10 @@ pipeline {
                         --no-confirm-changeset \
                         --no-fail-on-empty-changeset
                 '''
+                
                 script {
                     env.API_URL = sh(
-                        script: "aws cloudformation describe-stacks --stack-name todo-list-aws-staging --query 'Stacks[0].Outputs[?OutputKey==`BaseUrlApi`].OutputValue' --output text --region us-east-1",
+                        script: "aws cloudformation describe-stacks --stack-name todo-list-aws-staging --query 'Stacks[0].Outputs[?OutputKey==`BaseUrlApi`].OutputValue' --region us-east-1 --output text",
                         returnStdout: true
                     ).trim()
                     echo "API URL: ${env.API_URL}"
