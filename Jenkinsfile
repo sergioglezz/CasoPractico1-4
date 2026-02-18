@@ -51,6 +51,7 @@ pipeline {
             steps {
                 sh 'pip3 install pytest requests --break-system-packages -q'
                 sh """
+                    export PATH=\$PATH:/var/lib/jenkins/.local/bin
                     export BASE_URL='${env.API_URL}'
                     pytest test/integration/todoApiTest.py --junitxml=result-rest.xml -v
                 """
