@@ -39,7 +39,7 @@ pipeline {
                 sh """
                     export PATH=\$PATH:/var/lib/jenkins/.local/bin
                     export BASE_URL='${env.API_URL}'
-                    pytest test/integration/todoApiTest.py -k "test_api_listtodos" --junitxml=result-rest.xml -v
+                    pytest test/integration/todoApiTest.py -m readonly --junitxml=result-rest.xml -v
                 """
                 junit 'result-rest.xml'
             }
