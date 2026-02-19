@@ -25,7 +25,7 @@ pipeline {
                 
                 script {
                     env.API_URL = sh(
-                        script: "aws cloudformation describe-stacks --stack-name todo-list-aws-production --query 'Stacks[0].Outputs[?OutputKey==\`BaseUrlApi\`].OutputValue' --region us-east-1 --output text",
+                        script: "aws cloudformation describe-stacks --stack-name todo-list-aws-production --query 'Stacks[0].Outputs[?OutputKey==`BaseUrlApi`].OutputValue' --region us-east-1 --output text",
                         returnStdout: true
                     ).trim()
                     echo "API URL: ${env.API_URL}"
