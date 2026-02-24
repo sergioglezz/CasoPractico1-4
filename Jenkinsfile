@@ -58,7 +58,12 @@ pipeline {
         }
 
         stage('Promote') {
+            agent any
             steps {
+                unstash 'source-code'
+                unstash 'test-results'
+                junit 'result-rest.xml'
+                
                 withCredentials([usernamePassword(
                     credentialsId: 'github-credentials',
                     usernameVariable: 'GIT_USER',
@@ -67,7 +72,7 @@ pipeline {
                     sh '''
                         git config user.email "jenkins@devops.com"
                         git config user.name "Jenkins CI"
-                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-4.git
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-3.git
                         git checkout master
                         git fetch origin
                         
@@ -76,10 +81,11 @@ pipeline {
                             echo "Merge exitoso sin conflictos"
                         else
                             echo "Conflicto detectado, resolviendo..."
-                            # Mantener el Jenkinsfile de master
+                            # Mantener ambos Jenkinsfiles de master
                             git checkout --ours Jenkinsfile
-                            git add Jenkinsfile
-                            git commit -m "Merge develop manteniendo Jenkinsfile de master"
+                            git checkout --ours Jenkinsfile_agentes
+                            git add Jenkinsfile Jenkinsfile_agentes
+                            git commit -m "Merge develop manteniendo Jenkinsfiles de master"
                         fi
                         
                         git push origin master
