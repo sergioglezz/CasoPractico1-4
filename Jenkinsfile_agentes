@@ -127,9 +127,6 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
-        }
         success {
             echo 'Pipeline CI completado con exito!'
         }
