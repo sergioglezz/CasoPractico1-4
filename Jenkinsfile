@@ -67,7 +67,7 @@ pipeline {
                     sh '''
                         git config user.email "jenkins@devops.com"
                         git config user.name "Jenkins CI"
-                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-3.git
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-4.git
                         git checkout master
                         git fetch origin
                         
