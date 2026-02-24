@@ -69,7 +69,19 @@ pipeline {
                         git config user.name "Jenkins CI"
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-3.git
                         git checkout master
-                        git merge develop --no-edit
+                        git fetch origin
+                        
+                        # Intentar merge
+                        if git merge develop --no-edit; then
+                            echo "Merge exitoso sin conflictos"
+                        else
+                            echo "Conflicto detectado, resolviendo..."
+                            # Mantener el Jenkinsfile de master
+                            git checkout --ours Jenkinsfile
+                            git add Jenkinsfile
+                            git commit -m "Merge develop manteniendo Jenkinsfile de master"
+                        fi
+                        
                         git push origin master
                     '''
                 }
