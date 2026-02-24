@@ -80,10 +80,9 @@ pipeline {
         }
 
         stage('Promote') {
-            agent any 
+            agent any
             steps {
                 unstash 'source-code'
-                
                 unstash 'test-results'
                 junit 'result-rest.xml'
                 
@@ -96,8 +95,29 @@ pipeline {
                         git config user.email "jenkins@devops.com"
                         git config user.name "Jenkins CI"
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-4.git
+                        
+                        # 1. Actualizar referencias remotas
+                        git fetch origin
+                        
+                        # 2. Cambiar a master y actualizarlo
                         git checkout master
-                        git merge develop --no-edit
+                        git pull origin master
+                        
+                        # 3. Intentar merge
+                        if git merge develop --no-edit; then
+                            echo "Merge exitoso sin conflictos"
+                        else
+                            echo "Conflicto detectado en Jenkinsfile, resolviendo..."
+                            
+                            # Mantener la versión de master del Jenkinsfile
+                            git checkout --ours Jenkinsfile
+                            git add Jenkinsfile
+                            
+                            # Completar el merge
+                            git commit -m "Merge develop to master (keeping master Jenkinsfile)"
+                        fi
+                        
+                        # 4. Push
                         git push origin master
                     '''
                 }
