@@ -103,32 +103,33 @@ pipeline {
                     sh '''
                         git config user.email "jenkins@devops.com"
                         git config user.name "Jenkins CI"
-                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-4.git
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-3.git
                         
-                        # 1. Actualizar referencias remotas
+                        rm -f samconfig.toml
+                        rm -f api_url.txt
+
                         git fetch origin
-                        
-                        # 2. Cambiar a master y actualizarlo
+
                         git checkout master
                         git pull origin master
                         
-                        # 3. Intentar merge
+                        echo "Mergeando develop a master"
                         if git merge develop --no-edit; then
                             echo "Merge exitoso sin conflictos"
                         else
-                            echo "Conflicto detectado en Jenkinsfile, resolviendo..."
-                            
-                            # Mantener la versión de master del Jenkinsfile
-                            git checkout --ours Jenkinsfile
-                            git add Jenkinsfile
-                            
-                            # Completar el merge
-                            git commit -m "Merge develop to master (keeping master Jenkinsfile)"
+                            echo "Conflictos detectados"
+                            git checkout --ours Jenkinsfile || true
+                            git checkout --ours Jenkinsfile_agentes || true
+                            git add Jenkinsfile Jenkinsfile_agentes
+                            git commit -m "Merge develop to master (keeping master Jenkinsfiles)"
                         fi
                         
-                        # 4. Push
+                        # Push
+                        echo "Pusheando cambios"
                         git push origin master
-                    '''
+                        
+                        echo "✅ Promote completado exitosamente"
+                            '''
                 }
             }
         }

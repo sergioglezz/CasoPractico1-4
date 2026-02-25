@@ -84,23 +84,32 @@ pipeline {
                         git config user.email "jenkins@devops.com"
                         git config user.name "Jenkins CI"
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/sergioglezz/CasoPractico1-3.git
-                        git checkout master
-                        git fetch origin
                         
-                        # Intentar merge
+                        rm -f samconfig.toml
+                        rm -f api_url.txt
+
+                        git fetch origin
+
+                        git checkout master
+                        git pull origin master
+                        
+                        echo "Mergeando develop a master"
                         if git merge develop --no-edit; then
                             echo "Merge exitoso sin conflictos"
                         else
-                            echo "Conflicto detectado, resolviendo..."
-                            # Mantener ambos Jenkinsfiles de master
-                            git checkout --ours Jenkinsfile
-                            git checkout --ours Jenkinsfile_agentes
+                            echo "Conflictos detectados"
+                            git checkout --ours Jenkinsfile || true
+                            git checkout --ours Jenkinsfile_agentes || true
                             git add Jenkinsfile Jenkinsfile_agentes
-                            git commit -m "Merge develop manteniendo Jenkinsfiles de master"
+                            git commit -m "Merge develop to master (keeping master Jenkinsfiles)"
                         fi
                         
+                        # Push
+                        echo "Pusheando cambios"
                         git push origin master
-                    '''
+                        
+                        echo "✅ Promote completado exitosamente"
+                            '''
                 }
             }
         }
