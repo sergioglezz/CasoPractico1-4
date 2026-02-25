@@ -5,9 +5,20 @@ pipeline {
 
         stage('Get Code') {
             steps {
-                git branch: 'master', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
+                git branch: 'develop', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
                 echo WORKSPACE
+                
+                dir('config-temp') {
+                    git branch: 'production', url: 'https://github.com/sergioglezz/todo-list-aws-config.git'
+                }
+                
+                sh '''
+                    cp config-temp/samconfig.toml .
+                    rm -rf config-temp
+                '''
+                
                 sh 'ls -la'
+                stash name: 'source-code', includes: '**/*'
             }
         }
 
