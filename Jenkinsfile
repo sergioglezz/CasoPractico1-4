@@ -6,8 +6,15 @@ pipeline {
         stage('Get Code') {
             steps {
                 git branch: 'develop', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
-                echo WORKSPACE
+                
+                sh '''
+                    curl -H "Authorization: token ${GIT_TOKEN}" \
+                        -o samconfig.toml \
+                        https://raw.githubusercontent.com/sergioglezz/todo-list-aws-config/staging/samconfig.toml
+                '''
+                
                 sh 'ls -la'
+                stash name: 'source-code', includes: '**/*'
             }
         }
 
