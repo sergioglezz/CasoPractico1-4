@@ -6,6 +6,10 @@ pipeline {
         stage('Get Code') {
             agent any
             steps {
+                // Test de conectividad
+                sh 'curl -I https://www.google.com || echo "Sin internet"'
+                sh 'curl -I https://github.com || echo "GitHub no accesible"'
+
                 git branch: 'develop', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
                 
                 sh '''
@@ -38,10 +42,6 @@ pipeline {
             agent any 
             steps {
                 unstash 'source-code'
-                
-                sh 'echo "=== Contenido de samconfig.toml ==="'
-                sh 'cat samconfig.toml'
-                sh 'echo "=== Fin del archivo ==="'
                 
                 sh 'sam build'
                 
