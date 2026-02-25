@@ -39,6 +39,10 @@ pipeline {
             steps {
                 unstash 'source-code'
                 
+                sh 'echo "=== Contenido de samconfig.toml ==="'
+                sh 'cat samconfig.toml'
+                sh 'echo "=== Fin del archivo ==="'
+                
                 sh 'sam build'
                 
                 sh '''
