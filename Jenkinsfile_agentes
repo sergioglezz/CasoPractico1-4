@@ -6,16 +6,23 @@ pipeline {
         stage('Get Code') {
             agent any
             steps {
-                // Test de conectividad
-                sh 'curl -I https://www.google.com || echo "Sin internet"'
-                sh 'curl -I https://github.com || echo "GitHub no accesible"'
-
+                // 1. Descargar código
                 git branch: 'develop', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
+                echo WORKSPACE
                 
+                // 2. Descargar configuración usando el plugin de Git (que SÍ tiene red)
+                dir('config-temp') {
+                    git branch: 'staging', url: 'https://github.com/sergioglezz/todo-list-aws-config.git'
+                }
+                
+                // 3. Copiar el archivo
                 sh '''
-                    curl -H "Authorization: token ${GIT_TOKEN}" \
-                        -o samconfig.toml \
-                        https://raw.githubusercontent.com/sergioglezz/todo-list-aws-config/staging/samconfig.toml
+                    echo "=== Copiando samconfig.toml ==="
+                    cp config-temp/samconfig.toml .
+                    rm -rf config-temp
+                    
+                    echo "=== Verificando ==="
+                    cat samconfig.toml
                 '''
                 
                 sh 'ls -la'
