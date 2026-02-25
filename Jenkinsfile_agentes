@@ -6,23 +6,16 @@ pipeline {
         stage('Get Code') {
             agent any
             steps {
-                // 1. Descargar código
                 git branch: 'develop', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
                 echo WORKSPACE
                 
-                // 2. Descargar configuración usando el plugin de Git (que SÍ tiene red)
                 dir('config-temp') {
                     git branch: 'staging', url: 'https://github.com/sergioglezz/todo-list-aws-config.git'
                 }
                 
-                // 3. Copiar el archivo
                 sh '''
-                    echo "=== Copiando samconfig.toml ==="
                     cp config-temp/samconfig.toml .
                     rm -rf config-temp
-                    
-                    echo "=== Verificando ==="
-                    cat samconfig.toml
                 '''
                 
                 sh 'ls -la'

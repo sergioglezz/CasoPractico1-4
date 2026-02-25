@@ -6,11 +6,15 @@ pipeline {
         stage('Get Code') {
             steps {
                 git branch: 'develop', url: 'https://github.com/sergioglezz/CasoPractico1-4.git'
+                echo WORKSPACE
+                
+                dir('config-temp') {
+                    git branch: 'staging', url: 'https://github.com/sergioglezz/todo-list-aws-config.git'
+                }
                 
                 sh '''
-                    curl -H "Authorization: token ${GIT_TOKEN}" \
-                        -o samconfig.toml \
-                        https://raw.githubusercontent.com/sergioglezz/todo-list-aws-config/staging/samconfig.toml
+                    cp config-temp/samconfig.toml .
+                    rm -rf config-temp
                 '''
                 
                 sh 'ls -la'
